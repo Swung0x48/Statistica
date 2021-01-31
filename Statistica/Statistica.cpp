@@ -10,3 +10,5 @@ void Statistica::OnLoad()
 {
 	m_bml->RegisterCommand(new Command());
 }
+
+

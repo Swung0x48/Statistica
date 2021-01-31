@@ -44,6 +44,32 @@ public:
 			else if (args[1] == "disable") {
 				bml->GetCKContext()->EnableProfiling(false);
 			}
+			else if (args[1] == "gpuinfo") {
+				bml->SendIngameMessage(std::to_string(bml->GetRenderManager()->GetRenderDriverCount()).c_str());
+				bml->SendIngameMessage(bml->GetRenderManager()->GetRenderDriverDescription(0)->DriverDesc);
+				bml->SendIngameMessage(std::to_string(bml->GetRenderManager()->GetRenderDriverDescription(0)->DisplayModeCount).c_str());
+			}
+			else if (args[1] == "info")
+			{
+				char buffer[50];
+				float limit = bml->GetTimeManager()->GetFrameRateLimit();
+				sprintf(buffer, "%f fps", limit);
+				bml->SendIngameMessage(buffer);
+				
+				CKDWORD options = bml->GetTimeManager()->GetLimitOptions();
+				sprintf(buffer, "%hx", options);
+				bml->SendIngameMessage(buffer);
+			}
+			else if (args[1] == "setlimit")
+			{
+				if (args.size() < 3)
+				{
+					bml->SendIngameMessage("ERR: No number specified.");
+					return;
+				}
+
+				bml->GetTimeManager()->SetFrameRateLimit(atof(args[2].c_str()));
+			}
 		}
 	}
 	virtual const std::vector<std::string> GetTabCompletion(IBML* bml, const std::vector<std::string>& args) override {
