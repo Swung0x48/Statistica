@@ -5,6 +5,8 @@ class Command: public ICommand
 {
 private:
 	CKStats _stats;
+	int _displayModeCount;
+	int _pageSize = 10;
 public:
 	virtual std::string GetName() override { return "stats"; };
 	virtual std::string GetAlias() override { return "statistics"; };
@@ -45,19 +47,40 @@ public:
 				bml->GetCKContext()->EnableProfiling(false);
 			}
 			else if (args[1] == "gpuinfo") {
-				bml->SendIngameMessage(std::to_string(bml->GetRenderManager()->GetRenderDriverCount()).c_str());
-				bml->SendIngameMessage(bml->GetRenderManager()->GetRenderDriverDescription(0)->DriverDesc);
-				bml->SendIngameMessage(std::to_string(bml->GetRenderManager()->GetRenderDriverDescription(0)->DisplayModeCount).c_str());
+				_displayModeCount = bml->GetRenderManager()->GetRenderDriverDescription(0)->DisplayModeCount;
+				if (args.size() == 2) {
+					bml->SendIngameMessage(std::to_string(bml->GetRenderManager()->GetRenderDriverCount()).c_str());
+					bml->SendIngameMessage(bml->GetRenderManager()->GetRenderDriverDescription(0)->DriverDesc);
+					bml->SendIngameMessage(std::to_string(bml->GetRenderManager()->GetRenderDriverDescription(0)->DisplayModeCount).c_str());
+					bml->SendIngameMessage("See detailed display modes, use /stats gpuinfo [PageNumber].");
+					return;
+				}
+				int selectedPage = atoi(args[2].c_str());
+				if (selectedPage <= 0 || selectedPage * _pageSize > _displayModeCount)
+				{
+					bml->SendIngameMessage("ERR: Out of range.");
+					return;
+				}
+				VxDisplayMode* displaymodes = bml->GetRenderManager()->GetRenderDriverDescription(0)->DisplayModes;
+				char buffer[100];
+				for (int i = (selectedPage - 1) * _pageSize; i < ((selectedPage * _pageSize > _displayModeCount) ? (_displayModeCount) : (selectedPage * _pageSize)); i++) {
+					sprintf(buffer, "%dx%d, %dbit, %dHz", displaymodes[i].Width, displaymodes[i].Height, displaymodes[i].Bpp, displaymodes[i].RefreshRate);
+					bml->SendIngameMessage(buffer);
+				}
 			}
 			else if (args[1] == "info")
 			{
 				char buffer[50];
 				float limit = bml->GetTimeManager()->GetFrameRateLimit();
-				sprintf(buffer, "%f fps", limit);
+				sprintf(buffer, "Framerate limit: %f fps", limit);
 				bml->SendIngameMessage(buffer);
 				
 				CKDWORD options = bml->GetTimeManager()->GetLimitOptions();
-				sprintf(buffer, "%hx", options);
+				sprintf(buffer, "Limit options: 0x%08hx", options);
+				bml->SendIngameMessage(buffer);
+
+				VxDirectXData* dxInfo = bml->GetRenderContext()->GetDirectXInfo();
+				sprintf(buffer, "DirectXVer: %hx", dxInfo->DxVersion);
 				bml->SendIngameMessage(buffer);
 			}
 			else if (args[1] == "setlimit")
