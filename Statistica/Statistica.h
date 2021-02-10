@@ -17,7 +17,9 @@ public:
 	virtual CKSTRING GetDescription() override { return "Get game stats."; }
 	DECLARE_BML_VERSION;
 
+	CKDWORD _inputLat = 0;
 private:
 	virtual void OnLoad() override;
+	virtual void OnProcess() override;
 };
 

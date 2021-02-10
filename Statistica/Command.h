@@ -18,6 +18,8 @@ public:
 			bml->GetCKContext()->GetProfileStats(&_stats);
 			char buffer[50];
 			bml->SendIngameMessage("----------");
+			sprintf(buffer, "ActiveObjectsExecuted: %d", _stats.ActiveObjectsExecuted);
+			bml->SendIngameMessage(buffer);
 			sprintf(buffer, "TotalFrameTime: %.3fms", _stats.TotalFrameTime);
 			bml->SendIngameMessage(buffer);
 			sprintf(buffer, "Est.InterfaceTime: %.3fms", _stats.EstimatedInterfaceTime);
@@ -71,8 +73,12 @@ public:
 			else if (args[1] == "info")
 			{
 				char buffer[50];
-				float limit = bml->GetTimeManager()->GetFrameRateLimit();
-				sprintf(buffer, "Framerate limit: %f fps", limit);
+				float framerateLimit = bml->GetTimeManager()->GetFrameRateLimit();
+				sprintf(buffer, "Framerate limit: %f fps", framerateLimit);
+				bml->SendIngameMessage(buffer);
+
+				float behLimit = bml->GetTimeManager()->GetBehavioralRateLimit();
+				sprintf(buffer, "Behrate limit: %f lps", behLimit);
 				bml->SendIngameMessage(buffer);
 				
 				CKDWORD options = bml->GetTimeManager()->GetLimitOptions();
