@@ -21,12 +21,24 @@
     <ClInclude Include="Command.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Hiperf_Timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Statistica.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Hiperf_Timer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

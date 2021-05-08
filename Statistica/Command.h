@@ -13,6 +13,16 @@ public:
 	virtual std::string GetDescription() override { return "Profiling."; };
 	virtual bool IsCheat() override { return false; };
 	virtual void Execute(IBML* bml, const std::vector<std::string>& args) override {
+		if (args.size() == 4)
+		{
+			if (args[1] == "resize") {
+				int width = atoi(args[2].c_str());
+				int length = atoi(args[3].c_str());
+				bml->GetRenderContext()->Resize(0, 0, width, length);
+				return;
+			}
+		}
+
 		if (args.size() == 1)
 		{
 			bml->GetCKContext()->GetProfileStats(&_stats);
@@ -98,6 +108,16 @@ public:
 				}
 
 				bml->GetTimeManager()->SetFrameRateLimit(atof(args[2].c_str()));
+			}
+			else if (args[1] == "fullscreen") {
+				auto ctx = bml->GetRenderContext();
+				auto error = ctx->GoFullScreen(ctx->GetHeight(), ctx->GetWidth(), -1, ctx->GetDriverIndex(), 120);
+				char buffer[50]; sprintf(buffer, "%d", error);
+				bml->SendIngameMessage(buffer);
+			}
+			else {
+				bml->SendIngameMessage("ERR: Unknown command.");
+				return;
 			}
 		}
 	}
